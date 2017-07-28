@@ -123,6 +123,24 @@ class Product(ContentBaseModel):
     action_time = models.DateTimeField(blank=True, null=True)
     action_name = models.CharField(max_length=250, blank=True, null=True)
 
+    def save(self, *args, **kwargs):
+        if self.category:
+            super(Product, self).save(*args, **kwargs)
+            # we create properties if not exist
+            for cp in CategoryProperty.objects.filter(category=self.category):
+                pp = ProductProperty.objects.filter(category_property=cp,
+                    product=self)
+                if not pp:
+                    pp = ProductProperty(category_property=cp, product=self, value="--")
+                    pp.save()
+            # we create filters if not exist
+            for fc in FilterCategory.objects.filter(category=self.category):
+                pf = ProductFilter.objects.filter(filter_category=fc,
+                    product=self)
+                if not pf:
+                    pf = ProductFilter(filter_category=fc, product=self)
+                    pf.save()
+
     def pic(self):
         if self.image:
             return u'<img src="https://fabro.com.ua/media/%s" width="70"/>' % self.image
