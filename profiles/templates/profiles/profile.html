@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+
+	<div class="row">
+		{% if messages %}
+		    {% for message in messages %}
+		    <div 
+		    class="card-panel 
+		    {% if message.tags == 'success' %}
+		    teal lighten-4
+		    {% else %}
+		    pink lighten-3
+		    {% endif %}
+		    ">
+		    {{ message }}
+		    </div>
+		    
+		    {% endfor %}
+		{% endif %}
+		<h1>My profile {{request.user.email}}</h1>
+	</div>
+
+{% endblock content %}

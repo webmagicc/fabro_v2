@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load socialaccount %}
+{% providers_media_js %}
+
+{% block content %}
+
+
+	<div class="row">
+		<form method="post">
+		{% csrf_token %}
+	    <div class="col s12 m8 offset-m2">
+	      <div class="card">
+	        <div class="card-content ">
+	          <span class="card-title">Login</span>
+	          <div class="input-field col s12">
+	          	<input  id="email" type="text" class="validate">
+	          	<label for="first_name">Email</label>
+	           </div>
+	           <div class="input-field col s12">
+	          	<input  id="password" type="password" class="validate">
+	          	<label for="first_name">Password</label>
+	           </div>
+	           <div class="clearfix"></div>
+	        </div>
+	        <div class="card-action">
+	          <a class="waves-effect waves-light btn" href="{% provider_login_url "facebook" method="oauth2" %}">
+	          Login Facebook</a>
+	          <button class="waves-effect waves-light btn" type="submit" >
+	          <i class="material-icons left">input</i>
+	          SignIn</button>
+	          <a class="waves-effect waves-light btn" href="">
+	          <i class="material-icons left">perm_identity</i>
+	          SignUp</a>
+	        </div>
+	      </div>
+	    </div>
+	    </form>
+	</div>
+
+{% endblock content %}

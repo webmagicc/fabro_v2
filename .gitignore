@@ -1,0 +1,4 @@
+*pyc
+fabro_v2/media
+fabro_v2/local_settings.py
+fabfile.py
