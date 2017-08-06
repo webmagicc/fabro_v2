@@ -7,7 +7,7 @@ from core.models import BaseModel
 
 
 class Rating(BaseModel):
-	vote = models.DecimalField(max_digits=2, decimal_places=1, blank=True, null=True)
-	content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    vote = models.DecimalField(max_digits=2, decimal_places=1, blank=True, null=True)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
