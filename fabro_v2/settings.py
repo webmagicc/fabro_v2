@@ -52,6 +52,10 @@ INSTALLED_APPS = [
     'shop',
     'profiles',
     'old',
+    'rest_framework',
+    'comments',
+    'rating',
+    'core',
 ]
 
 MIDDLEWARE = [
@@ -147,6 +151,30 @@ STATIC_ROOT = os.path.join(PROJECT_PATH,  "static")
 MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(PROJECT_PATH,  "media")
+
+
+# rest_framework
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 100
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 from .local_settings import *

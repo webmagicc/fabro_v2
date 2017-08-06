@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, PermissionsMixin, UserManager
-from fabro_v2.models import OrderingBaseModel, BaseModel
+from core.models import OrderingBaseModel, BaseModel
 from django.utils.translation import to_locale, get_language, ugettext_lazy as _
 from django.utils.functional import cached_property
 

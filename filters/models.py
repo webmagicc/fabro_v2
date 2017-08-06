@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import to_locale, get_language, ugettext_lazy as _
 import uuid
 
-from fabro_v2.models import (
+from core.models import (
     BaseModel,
     OrderingBaseModel,
     SlugBaseModel

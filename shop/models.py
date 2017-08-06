@@ -1,9 +1,10 @@
 from django.db import models
 from mptt.models import MPTTModel, TreeForeignKey
-from fabro_v2.models import OrderingBaseModel, ContentBaseModel
+from core.models import OrderingBaseModel, ContentBaseModel, CommentBaseModel
 from django.utils.translation import to_locale, get_language, ugettext_lazy as _
 import uuid
 from django.conf import settings
+from properties.models import CategoryProperty, ProductProperty
 
 
 
@@ -19,7 +20,7 @@ def make_upload_path(instance, filename, prefix = False):
 
 
 
-class Category(MPTTModel, ContentBaseModel):
+class Category(MPTTModel, ContentBaseModel, CommentBaseModel):
     """
     Category of products
     """
@@ -34,14 +35,15 @@ class Category(MPTTModel, ContentBaseModel):
         default="",
         verbose_name=_('Image'))
     count_prod = models.IntegerField(blank=True, null=True)
-    reit = models.DecimalField(max_digits=2, decimal_places=1, blank=True, null=True)
-    count_votes = models.IntegerField(blank=True, null=True)
-    comments_count = models.IntegerField(blank=True, null=True)
+    
 
 
 
     def __str__(self):
         return self.name
+
+    def get_filters(self):
+        return FilterCategory.objects.filter(category=self).order_by('ordering')
 
     class Meta:
         verbose_name = _('Category')
@@ -52,7 +54,7 @@ class Category(MPTTModel, ContentBaseModel):
 
 
 
-class Brand(ContentBaseModel):
+class Brand(ContentBaseModel, CommentBaseModel):
     """
     Brands of products
     """
@@ -62,9 +64,7 @@ class Brand(ContentBaseModel):
         default="",
         verbose_name=_('Image'))
     count_prod = models.IntegerField(blank=True, null=True)
-    reit = models.DecimalField(max_digits=2, decimal_places=1, blank=True, null=True)
-    count_votes = models.IntegerField(blank=True, null=True)
-    comments_count = models.IntegerField(blank=True, null=True)
+    
 
     def __str__(self):
         return self.name
@@ -75,7 +75,7 @@ class Brand(ContentBaseModel):
 
 
 
-class Product(ContentBaseModel):
+class Product(ContentBaseModel,CommentBaseModel):
 
     sky = models.CharField(_("Sky"),
         blank=True,
@@ -111,9 +111,6 @@ class Product(ContentBaseModel):
         help_text=_('Show this product on Home page?'))
     short_text = models.TextField(blank=True,)
     full_text = models.TextField(blank=True,)
-    reit = models.DecimalField(max_digits=2, decimal_places=1, blank=True, null=True)
-    count_votes = models.IntegerField(blank=True, null=True)
-    comments_count = models.IntegerField(blank=True, null=True)
     recomend = models.IntegerField(blank=True, null=True)
     saleslider = models.IntegerField(blank=True, null=True)
     price_ue = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
@@ -122,6 +119,11 @@ class Product(ContentBaseModel):
     action = models.IntegerField(blank=True, null=True)
     action_time = models.DateTimeField(blank=True, null=True)
     action_name = models.CharField(max_length=250, blank=True, null=True)
+
+    @property
+    def properties(self):
+        items = ProductProperty.objects.filter(product=self)
+        return items
 
     def save(self, *args, **kwargs):
         if self.category:
@@ -150,6 +152,22 @@ class Product(ContentBaseModel):
             return '(none)'
     pic.short_description = 'Image'
     pic.allow_tags = True
+
+
+    def get_filters(self):
+        res = {}
+        category = self.category
+        for fp in ProductFilter.objects.filter(product=self):
+            name = fp.filter_category.name
+            if not fp.filter_category.slug:
+                fp.filter_category.slug = slugify(name)
+                fp.filter_category.save()
+            slug = fp.filter_category.slug
+            selects = []
+            for s in fp.values.all():
+                selects.append(s.name)
+            res.update({slug:selects})
+        return res
 
 
     def __str__(self):
